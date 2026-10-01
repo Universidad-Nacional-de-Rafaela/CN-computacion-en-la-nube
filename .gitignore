@@ -1,0 +1,6 @@
+# Carpetas descomprimidas de cada clase (el zip es lo que se versiona)
+clase-*/clase-*/
+# Datos que bajan los alumnos
+clase-*/clase2-datos/
+# Archivos locales de herramientas
+.claude/

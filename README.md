@@ -11,7 +11,7 @@ archivo comprimido **con clave**:
 
 ```
 clase-1-de-docker-a-la-nube/
-clase-2/
+clase-2-del-csv-al-data-lake/
 clase-3/
 ```
 
@@ -48,8 +48,9 @@ El Explorador de Windows no abre archivos comprimidos con clave. Instalen
 
 ## Sobre el curso de AWS Academy
 
-En paralelo van a hacer **AWS Academy Cloud Developing** por su cuenta, en casa. Las
-clases presenciales son la contraparte práctica de ese curso: acá se van a comer los
+En paralelo van a hacer los cursos de **AWS Academy** por su cuenta, en casa (primero
+*Cloud Developing*, después *Data Engineering*). Las clases presenciales son la
+contraparte práctica de esos cursos: acá se van a comer los
 problemas que allá aparecen resueltos como servicios.
 
 Por eso el tiempo de casa es para AWS Academy y el trabajo sobre este material se hace
