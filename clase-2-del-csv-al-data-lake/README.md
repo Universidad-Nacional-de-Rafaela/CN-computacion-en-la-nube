@@ -9,6 +9,52 @@ trabajar ustedes y varias veces les voy a pedir que hagan algo "mal" a propósit
 
 **No hace falta cuenta de AWS ni tarjeta de crédito.** Todo corre en su máquina.
 
+## Lo que vamos a armar
+
+Del CSV del Ministerio a un tablero, pasando por las tres zonas de un data lake. Cada
+flecha dice en qué nivel de la clase la construimos.
+
+```mermaid
+flowchart LR
+    subgraph fuentes["Fuentes"]
+        sube_csv["Datos abiertos SUBE<br/>un CSV por año<br/>2020–2026"]
+        meteo["Open-Meteo<br/>clima diario de Rafaela<br/>(API o respaldo local)"]
+    end
+
+    subgraph lago["Data lake · bucket S3 sube-lake (LocalStack)"]
+        raw[("raw/<br/>copia fiel, texto<br/>sube/anio=AAAA/<br/>clima/mes=AAAA-MM/")]
+        clean[("clean/<br/>Parquet con tipos<br/>sube/anio=/provincia=<br/>rechazados/")]
+        curated[("curated/<br/>rafaela_diario.parquet<br/>un día por fila")]
+    end
+
+    subgraph consumo["Consumo"]
+        sql["consultar · consola<br/>SQL con DuckDB"]
+        tablero["Metabase<br/>tablero"]
+    end
+
+    subgraph vivo["En vivo"]
+        productor["productor<br/>inventa los boletos<br/>de un día"]
+        kinesis[["Kinesis<br/>usos-en-vivo<br/>2 shards"]]
+        consumidor["consumidor<br/>cuenta por línea<br/>cada 15 min"]
+        checkpoint[/"checkpoint<br/>por shard"/]
+    end
+
+    sube_csv -- "ingesta_sube · N1" --> raw
+    meteo -- "ingesta_clima · N1<br/>clave idempotente" --> raw
+    raw -- "limpieza · N2<br/>reglas_limpieza.sql" --> clean
+    clean -- "curado · N4<br/>SUBE + clima" --> curated
+    raw -. "clima" .-> curated
+    clean --> sql
+    curated --> sql
+    curated --> tablero
+    clean -- "N6" --> productor
+    productor --> kinesis --> consumidor
+    consumidor --> checkpoint
+
+    airflow{{"Airflow · N5<br/>corre ingesta, limpieza y curado"}}
+    airflow -.-> lago
+```
+
 ## Qué preparar EN CASA, antes de venir
 
 Es ancho de banda, no es tarea: unos 3 GB de imágenes y 380 MB de datos. Bajarlo todos
